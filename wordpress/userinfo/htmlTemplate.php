@@ -15,20 +15,40 @@ body.noscroll
 	border: 5px solid #c1d9ff;
 	padding: 10px;
 }
+
+.userinfo h2
+{
+	text-align: center;
+	font-family: "Open Sans", Arial, sans-serif;
+	padding: 10px 0 0;
+}
+
 .userinfo-top
 {
 	width: 100%;
 	color: #ff0000;
 	padding: 0 0 0 202px;
 }
+
 .userinfo input[type="string"],
 .userinfo input[type="password"]
 {
-	width: 230px;}
+	width: 230px;
+	border: 1px solid #CCCCCC;
+	font-size: 14px;
+	padding: 6px 9px;
+}
+
+.userinfo input[type="string"]:focus,
+.userinfo input[type="password"]:focus
+{
+	border-color: #333333;
+}
 
 .field
 {
-	margin: 10px 0;}
+	margin: 10px 0;
+}
 
 .userinfo-label
 {
@@ -37,6 +57,8 @@ body.noscroll
 	text-align: right;
 	padding: 5px 10px 0 0;
 	font-weight: bold;
+	font: 14px "Lucida Grande", Verdana, Arial, sans-serif;
+	color: #666666;
 }
 </style>
 
@@ -66,7 +88,7 @@ function popupForm()
 		maskDiv.style.display = 'block';
 		maskDiv.style.visibility = 'visible';
 		maskDiv.style.backgroundColor="#000000";
-		maskDiv.style.opacity = 0.5;
+		maskDiv.style.opacity = 0.8;
 		maskDiv.style.zIndex = 100000;
 		maskDiv.style.position = 'absolute';
 	}
@@ -81,7 +103,7 @@ function popupForm()
 		boxContainer.className = "userinfo";
 		boxContainer.style.left = (ww - 400) / 2 + 'px';
 		boxContainer.style.top = (wh - 300) / 2 - 50 + 'px';
-		boxContainer.innerHTML = "<h3>Please update your email address and reset your password!</h3>";
+		boxContainer.innerHTML = "<h2>Set Email and Password</h3>";
 			
 		boxtop = document.createElement("div");
 		boxtop.className = "userinfo-top";
@@ -102,7 +124,7 @@ function popupForm()
 		var boxLebel = document.createElement("div");
 		boxLebel.className = "userinfo-label";
 		boxField.appendChild(boxLebel);
-		boxLebel.innerHTML = "<label for=\"userinfo_email\">Your Email Address:</label>";
+		boxLebel.innerHTML = "<label for=\"userinfo_email\">Email Address:</label>";
 		
 		var boxInput = document.createElement("div");
 		boxInput.className = "userinfo-field";
@@ -116,7 +138,7 @@ function popupForm()
 		boxLebel = document.createElement("div");
 		boxLebel.className = "userinfo-label";
 		boxField.appendChild(boxLebel);
-		boxLebel.innerHTML = "<label for=\"userinfo_pass\">Your New Password:</label>";
+		boxLebel.innerHTML = "<label for=\"userinfo_pass\">New Password:</label>";
 		
 		boxInput = document.createElement("div");
 		boxInput.className = "userinfo-field";
@@ -130,7 +152,7 @@ function popupForm()
 		boxLebel = document.createElement("div");
 		boxLebel.className = "userinfo-label";
 		boxField.appendChild(boxLebel);
-		boxLebel.innerHTML = "<label for=\"userinfo_repass\">Retype Your New Password:</label>";
+		boxLebel.innerHTML = "<label for=\"userinfo_repass\">Repeat New Password:</label>";
 		
 		boxInput = document.createElement("div");
 		boxInput.className = "userinfo-field";
@@ -146,9 +168,10 @@ function popupForm()
 		boxField.appendChild(boxLebel);
 		
 		boxInput = document.createElement("div");
-		boxInput.className = "userinfo-field";
+		boxInput.className = "userinfo-field home-login";
+		boxInput.style.padding = 0;
 		boxField.appendChild(boxInput);
-		boxInput.innerHTML = "<input type=\"hidden\" value=\"<?php echo $securityToken;?>\" name=\"token\"/><input type=\"button\" value=\"submit\" class=\"button button-primary\"/ onclick=\"submitForm()\">"
+		boxInput.innerHTML = "<input type=\"hidden\" value=\"<?php echo $securityToken;?>\" name=\"token\"/><input style=\"margin:0;\" type=\"button\" value=\"submit\" class=\"button-primary\"/ onclick=\"submitForm()\">"
 			
 		var boxfooter = document.createElement("div");
 		boxfooter.className = "userinfo-footer";

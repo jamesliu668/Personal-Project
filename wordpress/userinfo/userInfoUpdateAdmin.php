@@ -26,13 +26,15 @@
 		}
 	}
 
-	
+	add_submenu_page( 'users.php', "Force Email Update", "Force Email Update", 'manage_options', 'userinfoupdate-menu-handle', 'userInfoUpdateWidget');
 	//add turn on/off widget on dashboard
+	/*
 	wp_add_dashboard_widget(
 		'user_info_update',         // Widget slug.
 		'User Info Change',         // Title.
 		'userInfoUpdateWidget'			// Display function.
 	);
+	*/
 ?>
 
 
@@ -70,10 +72,11 @@
 			$offState = "";
 		}
 		
-		$actionURL = get_admin_url();
+		$actionURL = get_admin_url()."users.php?page=userinfoupdate-menu-handle";
 		$securityToken = md5($current_user->user_login.$current_user->ID);
 		
-		echo "<form action=\"$actionURL\" method=\"POST\"><div style=\"padding: 0 0 16px 0;\">Changing Predefined User Info</div>
+		echo "<h2>Force Predefined User to Update Email and Password</h2>
+		<p>Set \"on\" to enable predefined users to update their email and password when they log in at first time!</p><form action=\"$actionURL\" method=\"POST\"><div style=\"padding: 0 0 16px 0;\">Changing Predefined User Info</div>
 		<div style=\"margin: 0 0 10px 0; height: 20px;\">
 			<div style=\"float: left;\"><input style=\"margin: 0px 5px 0 0;\" type=\"radio\" name=\"isUpdatePredefineUser\" value=\"on\" id=\"isOnYes\" $onState/><label for=\"isOnYes\">On</label></div>
 			<div style=\"float: left; margin: 0px 0 0 50px;\"><input style=\"margin: 0px 5px 0 0;\" type=\"radio\" name=\"isUpdatePredefineUser\" value=\"off\" id=\"isOnNo\" $offState/><label for=\"isOnNo\">Off</label></div>
