@@ -25,10 +25,21 @@
 			updateUserInfo($_POST['userinfo_email'], $_POST['userinfo_pass']);
 		}
 	}
-	
-	$optionState = get_option( 'isUpdatePredefineUser', 'off');
-	if($optionState == "on") {
-		showHTML();
+	else if(!empty($_POST['userinfo_email']) && !empty($_POST["token"]) && !empty($_POST["action"]) && $_POST["action"] == 'checkemail')
+	{
+		$securityToken = md5($current_user->user_login.$current_user->ID);
+		if($_POST["token"] == $securityToken)
+		{
+			echo checkEmail($_POST['userinfo_email']) ? "true" : "false";
+			exit();
+		}
+	}
+	else
+	{
+		$optionState = get_option( 'isUpdatePredefineUser', 'off');
+		if($optionState == "on") {
+			showHTML();
+		}
 	}
 ?>
 
@@ -58,30 +69,37 @@
 		global $current_user;
 		$currentUserID = $current_user->ID;
 		
-		//update password
-		wp_set_password($pass, $current_user->ID);
-		
-		//update user email
-		wp_update_user( array ( 'ID' => $current_user->ID, 'user_email' => $email ) ) ;
-		
-		require_once(ROOT_PATH . "model/UserInfoUpdateDTO.php");
-		require_once(ROOT_PATH . "model/UserInfoUpdateDAO.php");
-		$userDAO = new UserInfoUpdateDAO();
-		$userDTO = $userDAO->getItemByItemID($current_user->ID);
-		if($userDTO == false) {
-			$userDTO = new UserInfoUpdateDTO();
-			$userDTO->userid = $current_user->ID;
-			$userDTO->isEmailUpdated = 1;
-			$userDTO->isPasswordUpdated = 1;
-			$userDAO->add($userDTO);
-		} else {
-			$userDTO->isEmailUpdated = 1;
-			$userDTO->isPasswordUpdated = 1;
-			$userDAO->update($userDTO);
+		if(checkEmail($email))
+		{
+			echo "<script language=\"javascript\" type=\"text/javascript\">alert(\"Your email already exists, please change another email address!\");window.location.href=\"". curPageURL() ."\"</script>";
 		}
-		
-		wp_set_auth_cookie( $currentUserID, true);
-		echo "<script language=\"javascript\" type=\"text/javascript\">alert(\"Your information is updated successfully!\");</script>";
+		else
+		{
+			//update password
+			wp_set_password($pass, $current_user->ID);
+			
+			//update user email
+			wp_update_user( array ( 'ID' => $current_user->ID, 'user_email' => $email ) ) ;
+			
+			require_once(ROOT_PATH . "model/UserInfoUpdateDTO.php");
+			require_once(ROOT_PATH . "model/UserInfoUpdateDAO.php");
+			$userDAO = new UserInfoUpdateDAO();
+			$userDTO = $userDAO->getItemByItemID($current_user->ID);
+			if($userDTO == false) {
+				$userDTO = new UserInfoUpdateDTO();
+				$userDTO->userid = $current_user->ID;
+				$userDTO->isEmailUpdated = 1;
+				$userDTO->isPasswordUpdated = 1;
+				$userDAO->add($userDTO);
+			} else {
+				$userDTO->isEmailUpdated = 1;
+				$userDTO->isPasswordUpdated = 1;
+				$userDAO->update($userDTO);
+			}
+			
+			wp_set_auth_cookie( $currentUserID, true);
+			echo "<script language=\"javascript\" type=\"text/javascript\">alert(\"Your information is updated successfully!\");window.location.href=\"". curPageURL() ."\"</script>";
+		}
 	}
 	
 	function curPageURL() {
@@ -94,5 +112,22 @@
 		$pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
 		}
 		return $pageURL;
+	}
+	
+	function checkEmail($email) {
+		$args = array(
+			'search'         => $email,
+			'search_columns' => array( 'user_email' ),
+		);
+		$user_query = new WP_User_Query( $args );
+		//if 1 or more, the email already exists
+		if($user_query->total_users > 0)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 ?>

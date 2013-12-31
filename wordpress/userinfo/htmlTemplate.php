@@ -7,13 +7,13 @@ body.noscroll
 
 .userinfo
 {
-	width: 480px;
-	height: 300px;
+	width: 420px;
+	height: 240px;
 	background: #ffffff;
 	position: absolute;
 	z-Index: 100001;
-	border: 5px solid #c1d9ff;
-	padding: 10px;
+	border-radius: 5px;
+	padding: 24px 5px;
 }
 
 .userinfo h2
@@ -52,7 +52,7 @@ body.noscroll
 
 .userinfo-label
 {
-	width: 190px;
+	width: 150px;
 	float: left;
 	text-align: right;
 	padding: 5px 10px 0 0;
@@ -60,9 +60,18 @@ body.noscroll
 	font: 14px "Lucida Grande", Verdana, Arial, sans-serif;
 	color: #666666;
 }
+
+.userinfo-label sup {
+	color: #f00; 
+	font-weight: bold; 
+}
+
 </style>
 
-<script type="text/javascript" language="javascript">window.onload = popupForm;
+<script type="text/javascript" language="javascript">
+
+window.onload = popupForm;
+
 var originalClassName;
 var maskDiv = null;
 var boxContainer = null;
@@ -84,7 +93,7 @@ function popupForm()
 		maskDiv.style.left = '0px';
 		maskDiv.style.top = '0px';
 		maskDiv.style.width = '100%';
-		maskDiv.style.height = wh + "px";
+		maskDiv.style.height = '100%';
 		maskDiv.style.display = 'block';
 		maskDiv.style.visibility = 'visible';
 		maskDiv.style.backgroundColor="#000000";
@@ -124,12 +133,12 @@ function popupForm()
 		var boxLebel = document.createElement("div");
 		boxLebel.className = "userinfo-label";
 		boxField.appendChild(boxLebel);
-		boxLebel.innerHTML = "<label for=\"userinfo_email\">Email Address:</label>";
+		boxLebel.innerHTML = "<label for=\"userinfo_email\">Email Address<sup>*</sup>:</label>";
 		
 		var boxInput = document.createElement("div");
 		boxInput.className = "userinfo-field";
 		boxField.appendChild(boxInput);
-		boxInput.innerHTML = "<input type=\"string\" name=\"userinfo_email\" id=\"userinfo_email\"/>"
+		boxInput.innerHTML = "<input type=\"string\" name=\"userinfo_email\" id=\"userinfo_email\" onblur=\"checkEmail()\"/>"
 		
 		boxField = document.createElement("div");
 		boxField.className = "field";
@@ -138,7 +147,7 @@ function popupForm()
 		boxLebel = document.createElement("div");
 		boxLebel.className = "userinfo-label";
 		boxField.appendChild(boxLebel);
-		boxLebel.innerHTML = "<label for=\"userinfo_pass\">New Password:</label>";
+		boxLebel.innerHTML = "<label for=\"userinfo_pass\">New Password<sup>*</sup>:</label>";
 		
 		boxInput = document.createElement("div");
 		boxInput.className = "userinfo-field";
@@ -152,7 +161,7 @@ function popupForm()
 		boxLebel = document.createElement("div");
 		boxLebel.className = "userinfo-label";
 		boxField.appendChild(boxLebel);
-		boxLebel.innerHTML = "<label for=\"userinfo_repass\">Repeat New Password:</label>";
+		boxLebel.innerHTML = "<label for=\"userinfo_repass\">Repeat Password<sup>*</sup>:</label>";
 		
 		boxInput = document.createElement("div");
 		boxInput.className = "userinfo-field";
@@ -226,6 +235,45 @@ function submitForm()
 	else
 	{
 		document.getElementById("userinfoForm").submit();
+	}
+}
+
+function checkEmail()
+{
+	var emailInput = document.getElementById("userinfo_email");
+	if(originalBorderStyle == null)
+	{
+		originalBorderStyle = emailInput.style.border;
+	}
+	
+	emailInput.style.border = originalBorderStyle;
+	
+	var email = emailInput.value.trim();
+	var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if(re.test(email))
+	{
+		var request = jQuery.ajax({
+		  url: "<?php echo curPageURL();?>",
+		  type: "POST",
+		  data: { userinfo_email:email, token:"<?php echo $securityToken;?>", action:"checkemail" },
+		  dataType: "html"
+		});
+		
+		request.done(function( msg ) {
+			if(msg == "false")
+			{
+				boxtop.innerHTML = "";
+			}
+			else
+			{
+				boxtop.innerHTML = "Email already exists!";
+				emailInput.style.border = "2px solid #FF0000";
+			}
+		});
+		
+		request.fail(function( jqXHR, textStatus ) {
+			alert( "Request failed: " + textStatus );
+		});
 	}
 }
 </script>
