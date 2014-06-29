@@ -4,83 +4,58 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Star Rating</title>
 
-<script type="text/javascript" src="js/jquery.min.js"></script>
-<script type="text/javascript" src="js/jquery.raty.min.js"></script>
-<style type="text/css">
-    table,th,td {border:1px solid; border-spacing:0px; padding:3px 5px; border-collapse:collapse;}
-    .p-name{text-align: center; width:380px;}
-    .p-score{text-align: center; width:50px;}
-    .p-rating-btn{text-align: center; width:200px;}
-</style>
+<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="js/jquery.raty.js"></script>
 
 </head>
 
 <body>
 
-<table id="product-tbl">
-    <thead>
-    <tr>
-        <th class="p-name">Product</th>
-        <th class="p-score">Rating</th>
-        <th class="p-rating-btn"></th>
-    </tr>
-    </thead>
-    <tbody></tbody>
-</table>
-
 <div id="star-ct"></div>
+<a href="http://192.168.0.234/rating/RateManager.php?action=rating&itemid=AcjUPpoI5A&score=6">Rating</a>
+<a href="http://192.168.0.234/rating/RateManager.php?action=getScore&itemid=AcjUPpoI5A">Get Rating</a>
 
 <script type="text/javascript">
+	$.fn.raty.defaults.path = 'img';
+	
+	$(function (){refreshProduct()});
+
     function refreshProduct(){
         $.ajax({
-            url: 'dataProcessor.php',
+            url: 'RateManager.php',
+			dataType: "text",
             data: {
-                action: 'getProducts'
+                action: 'getScore',
+				itemid: 'AcjUPpoI5A'
             },
-            dataType: 'json',
-            success: function(resp) {
-                if(resp['success']){
-                    var $tbody = $('#product-tbl tbody');
-                    $tbody.empty();
-                    
-                    for(var i=0,len=resp['data'].length; i<len; i++){
-                        $tbody.append(
-                           ['<tr>',
-                                '<td class="p-name">'+resp['data'][i]['name']+'</td>',
-                                '<td class="p-score">'+resp['data'][i]['score']+'</td>',
-                                '<td id="p-btn-'+resp['data'][i]['id']+'" class="p-rating-btn"></td>',
-                            '</tr>'].join('')
-                        );
-                    }
-                    $('td.p-rating-btn').raty({
-                        half : true,
-                        size : 24,
-                        starHalf : 'star-half-big.png',
-                        starOff : 'star-off-big.png',
-                        starOn : 'star-on-big.png',
-                        click : function(score, evt) {
-                            var id = parseInt( this.attr('id').substr(6) );
-                            submitScore(id,score);
-                        }
-                    });
-                }else{
-                    alert("Fetching data failed.");
-                }
+            success: function(data) {
+				$("#star-ct").raty({
+					score: parseFloat(data),
+					half : false,
+					halfShow : true,
+					size : 24,
+					number: 10,
+					starHalf : 'star-half-big.png',
+					starOff : 'star-off-big.png',
+					starOn : 'star-on-big.png',
+					click : function(score, evt) {
+						submitScore("AcjUPpoI5A", score);
+					}
+				});
             }
         });
     }
     
     function submitScore(productId, score){
         $.ajax({
-            url: 'dataProcessor.php',
+            url: 'RateManager.php',
             data: {
-                action: 'addRaty',
-                productId: productId,
+                action: 'rating',
+                itemid: productId,
                 score: score
             },
-            dataType: 'json',
             success: function(data) {
-                if(data['success']){
+                if(data == "true"){
                     alert("Great job, rating processed.");
                     refreshProduct();
                 }else{
@@ -89,10 +64,6 @@
             }
         });
     }
-    
-    $(function() {
-        refreshProduct();
-    });
 </script>
 </body>
 </html>

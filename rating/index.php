@@ -1,5 +1,22 @@
 <?php
-	echo getUserIP() + "";
+	echo getUserIP()."";echo "<br/>";
+	echo $_SERVER['REMOTE_ADDR'];echo "<br/>";
+echo $_SERVER['HTTP_REFERER'];echo "<br/>";
+echo $_SERVER['HTTP_USER_AGENT'];echo "<br/>";
+echo get_browser(null, true);echo "<br/>";
+echo mt_rand_str(10);
+	
+function mt_rand_str ($length, $c = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890')
+{
+	$randomString = "";
+	for($i = 0; $i < $length; $i++)
+	{
+		$randomString .= $c[mt_rand(0, strlen($c)-1)];
+	}
+    return $randomString;
+}
+	
+	
 	
 	function getUserIP() {
         $alt_ip = $_SERVER['REMOTE_ADDR'];
