@@ -18,6 +18,13 @@
 			addRateProject($_POST["projname"], $_POST["projdesc"], $_POST["rateitem"]);
 		}
 	}
+	else if(!empty($_POST["action"]) && $_POST["action"] == "getitems")
+	{
+		if(!empty($_POST["projectid"]))
+		{
+			getItemListInJSON($_POST["projectid"]);
+		}
+	}
 	else if(!empty($_REQUEST["action"]) && $_REQUEST["action"] == "rating")
 	{
 		if(!empty($_REQUEST["score"])
@@ -126,6 +133,28 @@
 		
 		require_once(ROOT_PATH."views/viewproject.php");
 		require_once(ROOT_PATH."views/footer.php");
+	}
+	
+	function getItemListInJSON($projectId)
+	{
+		require_once(ROOT_PATH . "/model/RateItemDTO.php");
+		require_once(ROOT_PATH . "/model/RateItemDAO.php");
+		$rateItemDao = new RateItemDAO();
+		$itemList = $rateItemDao->getItemByProductID($projectId);
+		
+		$json = "{\"item\": [";
+		if(count($itemList) > 0)
+		{
+			foreach($itemList as $k=>$v)
+			{
+				$json = $json . "\"" . $v->hash_id . "\",";
+			}
+			
+			$json = substr($json, 0, -1);
+		}
+		$json = $json ."]}";
+		
+		echo $json;
 	}
 	
 	function addRateProject($projectName, $projectDesc, $rateItemList)

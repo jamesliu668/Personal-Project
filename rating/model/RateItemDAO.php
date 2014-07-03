@@ -51,7 +51,27 @@ class RateItemDAO {
         }
     }
 	
-	
+	public function getItemByProductID($productID) {
+		$itemList = array();
+        $this->sql = "SELECT * FROM `" . $this->db->addPrefix($this->tableName) . "`
+    				WHERE product_id=" . (int)$productID;
+        $result = $this->db->query($this->sql);
+        if ($this->db->affect_rows($result) > 0) {
+            while ($row = $this->db->fetch_assoc_array($result)) {
+                $item = new RateItemDTO();
+                $item->id = $row['id'];
+                $item->name = $row['name'];
+                $item->projectID = $row['product_id'];
+                $item->hash_id = $row['hash_id'];
+				$itemList[] = $item;
+            }
+			
+			$this->db->free($result);
+			$this->sql = null;
+        }
+		
+		return $itemList;
+    }
 	
 	
 	

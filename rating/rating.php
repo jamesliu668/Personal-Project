@@ -6,30 +6,18 @@
 
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script type="text/javascript" src="js/jquery.raty.js"></script>
-
-</head>
-
-<body>
-
-<div id="star-ct"></div>
-<a href="http://192.168.0.234/rating/RateManager.php?action=rating&itemid=AcjUPpoI5A&score=6">Rating</a>
-<a href="http://192.168.0.234/rating/RateManager.php?action=getScore&itemid=AcjUPpoI5A">Get Rating</a>
-
-<script type="text/javascript">
+<script type="text/javascript" language="javascript">
 	$.fn.raty.defaults.path = 'img';
-	
-	$(function (){refreshProduct()});
-
-    function refreshProduct(){
+    function refreshProduct(itemId){
         $.ajax({
             url: 'RateManager.php',
 			dataType: "text",
             data: {
                 action: 'getScore',
-				itemid: 'AcjUPpoI5A'
+				itemid: itemId
             },
             success: function(data) {
-				$("#star-ct").raty({
+				$("#" + itemId).raty({
 					score: parseFloat(data),
 					half : false,
 					halfShow : true,
@@ -39,7 +27,7 @@
 					starOff : 'star-off-big.png',
 					starOn : 'star-on-big.png',
 					click : function(score, evt) {
-						submitScore("AcjUPpoI5A", score);
+						submitScore(itemId, score);
 					}
 				});
             }
@@ -57,13 +45,22 @@
             success: function(data) {
                 if(data == "true"){
                     alert("Great job, rating processed.");
-                    refreshProduct();
+                    refreshProduct(productId);
                 }else{
                     alert("Processing failed.");
                 }
             }
         });
     }
+</script>
+
+</head>
+
+<body>
+
+<div id="AcjUPpoI5A"></div>
+<script type="text/javascript">
+$(function (){refreshProduct('AcjUPpoI5A')});
 </script>
 </body>
 </html>

@@ -48,6 +48,22 @@
 		{
 			document.location.href = "<?php echo $currentURL."DigitalGoodsAdmin.php?action=edit&itemid=" ?>" + itemid;
 		}
+		
+		function getCode(productid)
+		{
+			$.ajax({
+				url: 'RateManager.php',
+				type: 'POST',
+				dataType: "json",
+				data: {
+					action: 'getitems',
+					projectid: productid
+				},
+				success: function(data) {
+					alert(data);
+				}
+			});
+		}
 	//]]>
 	</script>
 	
@@ -71,7 +87,7 @@
 				<td>".($index + 1)."</td>
 				<td>". $projectdto->name ."</td>
 				<td>". $projectdto->description ."</td>
-				<td>      <button class=\"btn btn-default editbtn\" onclick=\"showPayPalFrameCode('". $projectdto->id ."', '". $index ."')\">Get Code</button><button class=\"btn btn-default editbtn\" onclick=\"editProduct('". $projectdto->id ."')\">Show Result</button><button class=\"btn btn-default\" onclick=\"editProduct('". $projectdto->id ."')\">Edit</button></td>
+				<td>      <button class=\"btn btn-default editbtn\" onclick=\"getCode('". $projectdto->id ."')\">Get Code</button><button class=\"btn btn-default editbtn\" onclick=\"editProduct('". $projectdto->id ."')\">Show Result</button><button class=\"btn btn-default\" onclick=\"editProduct('". $projectdto->id ."')\">Edit</button></td>
 				</tr>";
 			}
 			?>
